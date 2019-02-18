@@ -1,0 +1,128 @@
+package ua.nure.dudka.practice6.part5;
+
+import java.util.Comparator;
+
+public class Tree<T extends Comparable<T>> {
+    private static final String SPLITER = "  ";
+    private Comparator<T> comparator;
+    private Node<T> root;
+
+    Tree() {
+        root = null;
+        comparator = null;
+    }
+
+    private int compare(T firstNode, T secondNode) {
+        if (comparator == null) return firstNode.compareTo(secondNode);
+        else
+            return comparator.compare(firstNode, secondNode);
+    }
+
+    boolean add(T element) {
+        boolean tmp = !search(root, element);
+        root = add(root, element);
+        return tmp;
+    }
+
+    boolean add(T[] element) {
+        boolean flag = false;
+        for (T obj : element) {
+            add(obj);
+            flag = true;
+        }
+        return flag;
+    }
+
+    private Node<T> add(Node<T> parentNode, T element) {
+        if (parentNode == null)
+            return new Node<>(element);
+
+        if (compare(element, parentNode.element) == 0)
+            return parentNode;
+
+        if (compare(element, parentNode.element) < 0)
+            parentNode.left = add(parentNode.left, element);
+        else
+            parentNode.right = add(parentNode.right, element);
+
+        return parentNode;
+    }
+
+    private boolean search(Node<T> parentNode, T element) {
+        if (parentNode == null)
+            return false;
+        else if (compare(element, parentNode.element) == 0)
+            return true;
+        else if (compare(element, parentNode.element) < 0)
+            return search(parentNode.left, element);
+        else
+            return search(parentNode.right, element);
+    }
+
+    boolean remove(T element) {
+        boolean tmp = search(root, element);
+        root = remove(root, element);
+        return tmp;
+    }
+
+    private Node<T> remove(Node<T> parentNode, T element) {
+        if (parentNode == null) {
+            search(root, element);
+        } else if (compare(element, parentNode.element) < 0) {
+            parentNode.left = remove(parentNode.left, element);
+        } else if (compare(element, parentNode.element) > 0) {
+            parentNode.right = remove(parentNode.right, element);
+        } else {
+            if (parentNode.left == null) {
+                return parentNode.right;
+            } else if (parentNode.right == null) {
+                return parentNode.left;
+            } else {
+                parentNode.element = retrieveData(parentNode.right);
+                parentNode.right = remove(parentNode.right, parentNode.element);
+            }
+        }
+        return parentNode;
+    }
+
+    private T retrieveData(Node<T> parentNode) {
+        while (parentNode.right != null) {
+            parentNode = parentNode.left;
+        }
+        return parentNode.element;
+    }
+
+
+    public void print() {
+        if (root != null) {
+            root.printSubTree("");
+        }
+    }
+
+    public static class Node<E> {
+
+        private E element;
+        private Node<E> left;
+        private Node<E> right;
+
+        Node(E element, Node<E> left, Node<E> right) {
+            this.left = left;
+            this.right = right;
+            this.element = element;
+        }
+
+        Node(E element) {
+            this(element, null, null);
+        }
+
+        public void printSubTree(String splitter) {
+            if (left != null) {
+                left.printSubTree(splitter + SPLITER);
+            }
+            System.out.println(splitter + element);
+            if (right != null) {
+                right.printSubTree(splitter + SPLITER);
+            }
+        }
+    }
+}

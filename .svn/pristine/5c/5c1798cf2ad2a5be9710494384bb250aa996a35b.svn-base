@@ -1,0 +1,54 @@
+package ua.nure.dudka.practice6.part1;
+
+import java.util.Objects;
+
+public class Word {
+    private String content;
+    private int frequency = 0;
+
+    public Word(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Word word = (Word) o;
+        return getContent().equals(word.getContent());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getContent());
+    }
+
+    public int compareTo(Word word) {
+        if (this.frequency != word.frequency) {
+            return -Integer.compare(this.frequency, word.frequency);
+        } else {
+            return this.content.compareTo(word.content);
+        }
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+    @Override
+    public String toString() {
+        return content + " : " + frequency;
+    }
+}

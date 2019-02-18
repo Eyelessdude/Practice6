@@ -1,0 +1,90 @@
+package ua.nure.dudka.practice6.part2;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.LinkedList;
+
+public class Part2 {
+
+    public static long removeByIndex(List<?> list, int k) {
+        int index = k - 1;
+
+        long execStart = System.currentTimeMillis();
+        while (list.size() != 1) {
+            for (; index < list.size(); index += k - 1) {
+                list.remove(index);
+                if (list.size() == 1) {
+                    break;
+                }
+            }
+            index -= list.size();
+        }
+        long execEnd = System.currentTimeMillis();
+
+        return execEnd - execStart;
+    }
+
+    public static long removeByIterator(List<?> list, int k) {
+        int count = 0;
+        int finalCount = count;
+        Iterator<?> iterator = new Iterator<Object>() {
+            private Object tempObject;
+
+            @Override
+            public boolean hasNext() {
+                return list.size() != 1;
+            }
+
+            @Override
+            public Object next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("There is no elements to iterate through!");
+                }
+
+                tempObject = list.get(finalCount);
+                return tempObject;
+            }
+
+            @Override
+            public void remove() {
+                list.remove(tempObject);
+            }
+        };
+
+        long execStart = System.currentTimeMillis();
+        while (list.size() != 1) {
+            if (!iterator.hasNext()) {
+                iterator = list.iterator();
+                count = 0;
+            }
+            iterator.next();
+            count += k;
+            iterator.remove();
+        }
+        long execEnd = System.currentTimeMillis();
+
+        return execEnd - execStart;
+    }
+
+    public static void main(String[] args) {
+        List<Integer> testArrayList = new ArrayList<>();
+        Random random = new SecureRandom();
+        random.setSeed(System.currentTimeMillis());
+
+        for (int i = 0; i < 10000; i++) {
+            Integer integer = random.nextInt() % 256;
+            testArrayList.add(integer);
+        }
+        System.out.printf("ArrayList#Iterator: %d ms%n", removeByIterator(new ArrayList<>(testArrayList), 4));
+        System.out.printf("LinkedList#Iterator: %d ms%n", removeByIterator(new LinkedList<>(testArrayList), 4) / 4);
+
+        System.out.printf("ArrayList#Index: %d ms%n", Part2.removeByIndex(new ArrayList<>(testArrayList), 4));
+        System.out.printf("LinkedList#Index: %d ms%n", Part2.removeByIndex(new LinkedList<>(testArrayList), 4));
+
+    }
+
+}

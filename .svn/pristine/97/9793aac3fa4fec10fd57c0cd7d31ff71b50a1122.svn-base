@@ -1,0 +1,11 @@
+package ua.nure.dudka.practice6;
+
+import ua.nure.dudka.practice6.part1.Part1;
+import ua.nure.dudka.practice6.part2.Part2;
+
+public class Demo {
+    public static void main(String[] args) {
+        Part1.main(new String[]{});
+        Part2.main(new String[]{});
+    }
+}

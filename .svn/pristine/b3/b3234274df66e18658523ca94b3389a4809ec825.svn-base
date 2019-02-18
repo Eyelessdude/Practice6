@@ -1,0 +1,9 @@
+package ua.nure.dudka.practice6.part6;
+
+public class Part6 {
+    public static void main(String[] args) {
+        Main.main(new String[] { "-i part6.txt -t frequency" });
+        Main.main(new String[] { "--input part6.txt --task length" });
+        Main.main(new String[] { "-i part6.txt -t duplicates" });
+    }
+}

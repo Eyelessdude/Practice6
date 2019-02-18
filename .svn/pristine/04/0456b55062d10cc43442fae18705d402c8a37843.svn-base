@@ -1,0 +1,159 @@
+package ua.nure.dudka.practice6.part5;
+
+public class Tree<E extends Comparable<E>> {
+    private static final String SPLITER = "  ";
+    private Node<E> root;
+
+
+    public Tree() {
+        this.root = null;
+    }
+
+    public boolean add(E element) {
+        if (root == null) {
+            root = new Node<>(element);
+            return true;
+        }
+
+        Node<E> currentNode = root;
+        Node<E> parentNode;
+        while (true) {
+            parentNode = currentNode;
+            if (element.compareTo(currentNode.value) < 0) {
+                currentNode = currentNode.left;
+                if (currentNode == null) {
+                    parentNode.left = new Node<>(element);
+                    return true;
+                }
+            } else if (element.compareTo(currentNode.value) > 0) {
+                currentNode = currentNode.right;
+                if (currentNode == null) {
+                    parentNode.right = new Node<>(element);
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+
+    public void add(E[] elements) {
+        for (E element : elements) {
+            add(element);
+        }
+    }
+
+    public boolean remove(E element) {
+        if (root == null) {
+            throw new IllegalArgumentException("Tree is empty!");
+        }
+
+        Node<E> current = root;
+        Node<E> parent = root;
+        boolean isLeftChild = true;
+
+        while (element.compareTo(current.value) != 0) {
+            parent = current;
+            if (element.compareTo(current.value) < 0) {
+                isLeftChild = true;
+                current = current.left;
+            } else {
+                isLeftChild = false;
+                current = current.right;
+            }
+            if (current == null) {
+                return false;
+            }
+        }
+
+        if (current.left == null && current.right == null) {
+            if (current.value == root.value) {
+                root = null;
+            } else if (isLeftChild) {
+                parent.left = null;
+            } else {
+                parent.right = null;
+            }
+        } else if (current.right == null) {
+            if (current.value == root.value) {
+                root = current.left;
+            } else if (isLeftChild) {
+                parent.left = current.left;
+            } else {
+                parent.right = current.left;
+            }
+        } else if (current.left == null) {
+            if (current.value == root.value) {
+                root = current.right;
+            } else if (isLeftChild) {
+                parent.left = current.right;
+            } else {
+                parent.right = current.right;
+            }
+        } else {
+            Node<E> successor = getSuccessor(current);
+            if (current.value == root.value) {
+                root = successor;
+            } else if (isLeftChild) {
+                parent.left = successor;
+            } else {
+                parent.right = successor;
+            }
+            successor.left = current.left;
+        }
+
+        return true;
+    }
+
+    private Node<E> getSuccessor(Node<E> delNode) {
+        Node<E> successorParent = delNode;
+        Node<E> successor = delNode;
+        Node<E> current = delNode.right;
+
+        while (current != null) {
+            successorParent = successor;
+            successor = current;
+            current = current.left;
+        }
+
+        if (successor.value != delNode.right.value) {
+            successorParent.left = successor.right;
+            successor.right = delNode.right;
+        }
+
+        return successor;
+    }
+
+    public void print() {
+        if (root != null) {
+            root.printSubTree("");
+
+        }
+    }
+
+    private static class Node<E> {
+        E value;
+        Node<E> left;
+        Node<E> right;
+
+        Node(E value) {
+            this.value = value;
+            this.right = null;
+            this.left = null;
+        }
+
+        public void printSubTree(String splitter) {
+
+
+            if (left != null) {
+                left.printSubTree(splitter + SPLITER);
+            }
+            System.out.println(splitter + value);
+            if (right != null) {
+                right.printSubTree(splitter + SPLITER);
+
+            }
+
+        }
+    }
+}
